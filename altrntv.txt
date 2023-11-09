@@ -1,0 +1,85 @@
+#10.To create a program for segmentation of an image using watershed transforms
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load an image
+image = cv2.imread('a.jpg')
+original_image = image.copy()
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Apply thresholding to create a binary mask
+_, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+# Perform morphological operations to remove noise and prepare the image
+kernel = np.ones((3, 3), np.uint8)
+opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
+sure_bg = cv2.dilate(opening, kernel, iterations=3)
+
+# Perform distance transform
+dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
+_, sure_fg = cv2.threshold(dist_transform, 0.7 * dist_transform.max(), 255, 0)
+
+# Subtract the sure foreground from sure background
+sure_fg = np.uint8(sure_fg)
+unknown = cv2.subtract(sure_bg, sure_fg)
+
+# Label markers
+_, markers = cv2.connectedComponents(sure_fg)
+
+# Add one to all the labels to distinguish sure regions from unknown
+markers = markers + 1
+markers[unknown == 255] = 0
+
+# Apply the Watershed Transform
+cv2.watershed(image, markers)
+image[markers == -1] = [0, 0, 255]  # Mark watershed boundaries with red color
+
+# Display the segmented image using Matplotlib
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.title('Segmented Image')
+plt.show()
+
+
+2.Fourier transform of an image and applying low pass filter
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load an image
+image = cv2.imread('a.jpg')
+original_image = image.copy()
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Apply Fourier Transform to the image
+f_transform = np.fft.fft2(gray)
+f_transform_shifted = np.fft.fftshift(f_transform)
+
+# Create a mask to eliminate high-frequency components (low-pass filter)
+rows, cols = gray.shape
+crow, ccol = rows // 2, cols // 2
+mask_radius = 30  # Adjust this value to control the amount of high-frequency removal
+mask = np.ones((rows, cols), np.uint8)
+center = (crow, ccol)
+cv2.circle(mask, center, mask_radius, 0, thickness=-1)
+
+# Apply the mask to the shifted Fourier Transform
+f_transform_shifted_lowpass = f_transform_shifted * mask
+
+# Inverse Fourier Transform to get the image back
+f_transform_lowpass = np.fft.ifftshift(f_transform_shifted_lowpass)
+image_lowpass = np.fft.ifft2(f_transform_lowpass)
+image_lowpass = np.abs(image_lowpass)
+
+# Display the original and low-pass filtered images using Matplotlib
+plt.figure(figsize=(10, 5))
+
+plt.subplot(121), plt.imshow(gray, cmap='gray'), plt.title('Original Image')
+plt.subplot(122), plt.imshow(image_lowpass, cmap='gray'), plt.title('Low-pass Filtered Image')
+
+plt.show()

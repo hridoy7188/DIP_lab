@@ -1,0 +1,415 @@
+
+1.To create a program to display grayscale image using read and write operation.
+
+import cv2
+
+# Read the grayscale image
+image = cv2.imread('a.png', cv2.IMREAD_GRAYSCALE)
+
+if image is not None:
+    # Display the grayscale image
+    plt.subplot(122)
+    plt.imshow(image)
+    plt.title("Segmented Image")
+    plt.axis('off')
+
+    plt.show()
+else:
+    print("Image not found or couldn't be loaded.")
+
+2.To create a vision program to find histogram value and display histograph of a grayscale and color image.
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Function to display a grayscale histogram
+def plot_grayscale_histogram(image):
+    # Convert the input image to grayscale
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Calculate the histogram of the grayscale image
+    histogram = cv2.calcHist([gray_image], [0], None, [256], [0, 256])
+
+    # Create a new Matplotlib figure
+    plt.figure()
+    
+    # Set the title and labels for the grayscale histogram plot
+    plt.title('Grayscale Histogram')
+    plt.xlabel('Pixel Value')
+    plt.ylabel('Frequency')
+    
+    # Plot the grayscale histogram
+    plt.plot(histogram)
+    
+    # Set the X-axis range from 0 to 256 (pixel values)
+    plt.xlim([0, 256])
+    
+    # Show the grayscale histogram plot
+    plt.show()
+
+# Function to display a color histogram
+def plot_color_histogram(image):
+    color_histograms = []
+    
+    # Iterate over the three color channels (blue, green, and red)
+    for i in range(3):
+        # Calculate the histogram for each color channel
+        histogram = cv2.calcHist([image], [i], None, [256], [0, 256])
+        color_histograms.append(histogram)
+
+    colors = ('b', 'g', 'r')
+    
+    # Create a new Matplotlib figure
+    plt.figure()
+    
+    # Set the title and labels for the color histogram plot
+    plt.title('Color Histogram')
+    plt.xlabel('Pixel Value')
+    plt.ylabel('Frequency')
+    
+    # Plot the color histograms for each channel with different colors
+    for i in range(3):
+        plt.plot(color_histograms[i], color=colors[i])
+    
+    # Set the X-axis range from 0 to 256 (pixel values)
+    plt.xlim([0, 256])
+    
+    # Show the color histogram plot
+    plt.show()
+
+# Load an image (replace 'your_image.jpg' with the path to your image)
+image = cv2.imread('a.jpg')
+
+# Display histograms
+plot_grayscale_histogram(image)  # Display grayscale histogram
+plot_color_histogram(image)      # Display color histogram
+
+
+3.To create a vision program for Non-Linear Filtering technique using edge detection
+
+import cv2
+import numpy as np
+
+# Load the image
+image = cv2.imread('a.png')
+
+#convert the image to grayscale
+gray_image = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+
+if image is not None:
+    # Apply median filter to remove noise
+    median_filtered = cv2.medianBlur(image, 5)  # The second argument is the kernel size
+
+    # Calculate the edge map using the difference between the original and filtered image
+    edge_map = cv2.absdiff(image, median_filtered)
+
+    # Threshold the edge map to highlight edges
+    threshold_value = 30
+    edge_map[edge_map > threshold_value] = 255
+    edge_map[edge_map <= threshold_value] = 0
+
+    # Display the original image, filtered image, and edge map
+    plt.figure(figsize=(12,6))
+    
+    plt.subplot(2,3,1)
+    plt.imshow(cv2.cvtColor(image,cv2.COLOR_BGR2RGB))
+    plt.title('Sampled image')
+    plt.axis('off')
+    
+    plt.subplot(2,3,2)
+    plt.imshow(gray_image,cmap='gray')
+    plt.title('sampled Image')
+    plt.axis('off')
+    
+    plt.subplot(2,3,3)
+    plt.imshow(gray_image,cmap='gray')
+    plt.title('Median Filtered Image')
+    plt.axis('off')
+    
+    plt.subplot(2,3,4)
+    plt.imshow(gray_image,cmap='gray')
+    plt.title('Edge Map')
+    plt.axis('off')
+    
+    plt.show()
+    
+else:
+    print("Image not found or couldn't be loaded.")
+
+4.To create a vision program to determine the edge detection of an image using different operators
+
+import cv2
+import numpy as np
+
+# Load the image in grayscale
+image = cv2.imread('a.png', cv2.IMREAD_GRAYSCALE)
+
+if image is not None:
+    # Apply edge detection using different operators
+    sobel_x = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=3)
+    sobel_y = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=3)
+    sobel_edge = np.sqrt(sobel_x**2 + sobel_y**2)
+
+    prewitt_x = cv2.filter2D(image, -1, np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]]))
+    prewitt_y = cv2.filter2D(image, -1, np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]]))
+    prewitt_edge = np.sqrt(prewitt_x**2 + prewitt_y**2)
+
+    canny_edge = cv2.Canny(image, 100, 200)  # You can adjust the thresholds as needed
+
+    # Display the original image and the edge-detected images
+                                                  
+    plt.figure(figsize=(12,6))
+    
+    plt.subplot(2,3,1)
+    plt.imshow(cv2.cvtColor(image,cv2.COLOR_BGR2RGB))
+    plt.title('Sampled image')
+    plt.axis('off')
+    
+    plt.subplot(2,3,2)
+    plt.imshow(sobel_edge,cmap='gray')
+    plt.title('sobel')
+    plt.axis('off')
+    
+    plt.subplot(2,3,3)
+    plt.imshow(prewitt_edge,cmap='gray')
+    plt.title('Prewitt')
+    plt.axis('off')
+    
+    plt.subplot(2,3,4)
+    plt.imshow(canny_edge,cmap='gray')
+    plt.title('Canny')
+    plt.axis('off')
+    
+    plt.show()
+                                                   
+    
+else:
+    print("Image not found or couldn't be loaded.")
+
+
+5.To create a program to discretize an image using Fourier transformation.
+
+
+#To create a program to discretize an image using Fourier transformation.
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fftpack import fft2, ifft2, fftshift, ifftshift
+import cv2
+
+# Load an image
+image = cv2.imread('a.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Perform 2D FFT on the image
+image_fft = fft2(image)
+
+# Shift the zero frequency components to the center
+image_fft_shifted = fftshift(image_fft)
+
+# Apply a high-pass filter in the frequency domain to retain only certain components
+# Here, we'll zero out the low-frequency components in a circular region
+# and keep the high-frequency components
+rows, cols = image.shape
+crow, ccol = rows // 2, cols // 2
+radius = 30  # Adjust this radius as needed
+mask = np.ones((rows, cols), dtype=complex)
+mask[crow - radius:crow + radius, ccol - radius:ccol + radius] = 0
+image_fft_shifted_filtered = image_fft_shifted * mask
+
+# Shift the zero frequency components back to the top-left corner
+image_fft_filtered = ifftshift(image_fft_shifted_filtered)
+
+# Perform the inverse FFT to get the filtered image in the spatial domain
+filtered_image = np.abs(ifft2(image_fft_filtered))
+
+# Display the original and filtered images
+plt.subplot(131), plt.imshow(image, cmap='gray')
+plt.title('Original Image'), plt.axis('off')
+plt.subplot(132), plt.imshow(np.log(1 + np.abs(image_fft_shifted)), cmap='gray')
+plt.title('FFT of Image'), plt.axis('off')
+plt.subplot(133), plt.imshow(filtered_image, cmap='gray')
+plt.title('Filtered Image'), plt.axis('off')
+
+plt.show()
+
+6.To create a program to eliminate the high frequency components of an image.
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the image
+image = cv2.imread('a.png', cv2.IMREAD_GRAYSCALE)
+
+if image is not None:
+    # Apply Gaussian blur to eliminate high-frequency components
+    blurred_image = cv2.GaussianBlur(image, (9, 9), 0)  # Adjust kernel size as needed
+
+    # Display the original image and the blurred image
+    plt.figure(figsize=(12, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.title('Original Image')
+    plt.imshow(image, cmap='gray')
+
+    plt.subplot(1, 2, 2)
+    plt.title('Blurred Image')
+    plt.imshow(blurred_image, cmap='gray')
+
+    plt.show()
+else:
+    print("Image not found or couldn't be loaded.")
+
+7.To create a color image and perform read and write operation.
+
+#To create a color image and perform read and write operation
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Create a blank color image (here, a red square on a black background)
+image = np.zeros((300, 300, 3), dtype=np.uint8)
+image[:, :] = [0, 0, 255]  # Set the color (BGR format, so [0, 0, 255] represents red)
+
+# Display the created image
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.title('Created Colored Image')
+plt.imshow(image)
+plt.axis('off')
+plt.show()
+
+# Save the image to a file
+cv2.imwrite('created_image.png', image)
+
+# Read the saved image
+loaded_image = cv2.imread('created_image.png')
+
+# Display the loaded image
+if loaded_image is not None:
+    plt.figure(figsize=(12, 6))
+    plt.subplot(1, 2, 2)
+    plt.title('Loaded Colored Image')
+    plt.imshow(loaded_image)  
+    plt.axis('off')
+    plt.show()
+else:
+    print("Image not found or couldn't be loaded.")
+
+
+8.To obtain the R, B, G colour values and resolved colour values from a colour box by choosing any colour.
+
+
+import cv2
+import matplotlib.pyplot as plt
+
+# Load the color box image
+image = cv2.imread('a.jpg')  # Replace with your image file path
+
+# Get the RGB values of a pixel from the center of the image (you can choose any pixel)
+height, width, _ = image.shape
+center_x, center_y = width // 2, height // 2
+pixel_color = image[center_y, center_x]
+
+# Extract the B, G, and R color values
+b, g, r = pixel_color
+print(f"R: {r}, G: {g}, B: {b}")
+# Display the original color box image
+plt.figure(figsize=(8, 4))
+plt.subplot(121)
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.title("Color Box Image")
+plt.axis('off')
+
+# Create a new image with the resolved color
+resolved_color_image = image.copy()
+resolved_color_image[:] = pixel_color
+
+# Display the resolved color image
+plt.subplot(122)
+plt.imshow(cv2.cvtColor(resolved_color_image, cv2.COLOR_BGR2RGB))
+plt.title("Resolved Color Image")
+plt.axis('off')
+
+plt.show()
+
+9.To create a program performs discrete wavelet transform on image.
+
+#To create a program performs discrete wavelet transform on image.
+import cv2
+import pywt
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load an image
+image = cv2.imread('a.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Perform DWT on the image
+coeffs = pywt.dwt2(image, 'bior1.3')
+
+# Extract the approximation (cA) and detail (cH, cV, cD) coefficients
+cA, (cH, cV, cD) = coeffs
+
+# Display the original and DWT coefficients
+plt.figure(figsize=(12, 4))
+plt.subplot(2, 2, 1), plt.imshow(image, cmap='gray')
+plt.title('Original Image'), plt.axis('off')
+plt.subplot(2, 2, 2), plt.imshow(cA, cmap='gray')
+plt.title('Approximation (cA)'), plt.axis('off')
+plt.subplot(2, 2, 3), plt.imshow(cH, cmap='gray')
+plt.title('Horizontal Detail (cH)'), plt.axis('off')
+plt.subplot(2, 2, 4), plt.imshow(cV, cmap='gray')
+plt.title('Vertical Detail (cV)'), plt.axis('off')
+
+plt.show()
+
+
+10.To create a program for segmentation of an image using watershed transforms
+
+
+#create a program for segmentation of an image using watershed transforms.
+import cv2
+import numpy as np
+
+# Load an image
+image = cv2.imread('a.png')
+original_image = image.copy()
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Apply thresholding to create a binary mask
+_, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+# Perform morphological operations to remove noise and prepare the image
+kernel = np.ones((3, 3), np.uint8)
+opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
+sure_bg = cv2.dilate(opening, kernel, iterations=3)
+
+# Perform distance transform
+dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
+_, sure_fg = cv2.threshold(dist_transform, 0.7 * dist_transform.max(), 255, 0)
+
+# Subtract the sure foreground from sure background
+sure_fg = np.uint8(sure_fg)
+unknown = cv2.subtract(sure_bg, sure_fg)
+
+# Label markers
+_, markers = cv2.connectedComponents(sure_fg)
+
+# Add one to all the labels to distinguish sure regions from unknown
+markers = markers + 1
+markers[unknown == 255] = 0
+
+# Apply the Watershed Transform
+cv2.watershed(image, markers)
+image[markers == -1] = [0, 0, 255]  # Mark watershed boundaries with red color
+
+# Display the segmented image
+plt.subplot(122)
+plt.imshow(image)
+plt.title("Segmented Image")
+plt.axis('off')
+
+plt.show()
+

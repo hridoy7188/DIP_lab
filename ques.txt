@@ -1,0 +1,23 @@
+
+
+To create a program to display grayscale image using read and write operation.
+To create a vision program to find histogram value and display histograph of a grayscale and color image.
+To create a vision program for Non-Linear Filtering technique using edge detection
+To create a vision program to determine the edge detection of an image using different operators.
+To create a program to discretize an image using Fourier transformation.
+To create a program to eliminate the high frequency components of an image.
+To create a color image and perform read and write operation.
+To obtain the R, B, G colour values and resolved colour values from a colour box by choosing any colour.
+To create a program performs discrete wavelet transform on image.
+To create a program for segmentation of an image using watershed transforms.
+
+//
+To understand the fundamental concepts of image filtering and enhancement by implementing different techniques using a programming language such as Python with libraries like OpenCV.
+
+//
+To comprehend the concept of noise in digital images, identify different types of noise, and implement basic noise reduction techniques using Python with libraries like OpenCV
+
+
+
+
+

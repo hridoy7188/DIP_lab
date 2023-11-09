@@ -1,0 +1,294 @@
+1.To understand the fundamental concepts of image filtering and enhancement by implementing different techniques using a programming language such as Python with libraries like OpenCV.
+
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+
+# Upload file
+#noisy_image =files.upload()
+
+# Show the iamge
+#Image(noisy_image)
+
+# Load the noisy image
+noisy_image = cv2.imread('Test3.jpg', 0)  # Load as grayscale
+
+# Add different types of noise to the image
+# Example: Gaussian, Salt-and-Pepper, Speckle
+gaussian_noise = np.random.normal(0, 30, noisy_image.shape).astype(np.uint8)
+noisy_image_with_gaussian = cv2.add(noisy_image, gaussian_noise)
+
+salt_and_pepper = np.random.randint(0, 2, noisy_image.shape) * 255
+salt_and_pepper_noise = np.zeros_like(noisy_image)
+salt_and_pepper_noise[salt_and_pepper == 255] = 255
+noisy_image_with_salt_and_pepper = cv2.add(noisy_image, salt_and_pepper_noise)
+
+speckle = noisy_image + noisy_image * 0.5 * np.random.randn(*noisy_image.shape)
+noisy_image_with_speckle = speckle.astype(np.uint8)
+
+# Apply noise reduction techniques
+# Gaussian Noise Reduction using Gaussian Blur
+gaussian_blur = cv2.GaussianBlur(noisy_image_with_gaussian, (5, 5), 0)
+
+# Salt-and-Pepper Noise Reduction using Median Filter
+median_filtered = cv2.medianBlur(noisy_image_with_salt_and_pepper, 5)
+
+# Speckle Noise Reduction using Bilateral Filter
+bilateral_filtered = cv2.bilateralFilter(noisy_image_with_speckle, 9, 75, 75)
+
+# Display the images using Matplotlib
+plt.figure(figsize=(12, 12))
+
+plt.subplot(2, 3, 1), plt.imshow(noisy_image_with_gaussian, cmap='gray'), plt.title('Gaussian Noise')
+plt.subplot(2, 3, 2), plt.imshow(gaussian_blur, cmap='gray'), plt.title('Gaussian Blur')
+plt.subplot(2, 3, 3), plt.imshow(noisy_image_with_salt_and_pepper, cmap='gray'), plt.title('Salt-and-Pepper Noise')
+plt.subplot(2, 3, 4), plt.imshow(median_filtered, cmap='gray'), plt.title('Median Filter')
+plt.subplot(2, 3, 5), plt.imshow(noisy_image_with_speckle, cmap='gray'), plt.title('Speckle Noise')
+plt.subplot(2, 3, 6), plt.imshow(bilateral_filtered, cmap='gray'), plt.title('Bilateral Filter')
+plt.show()
+
+
+
+
+2.To comprehend the concept of noise in digital images, identify different types of noise, and implement basic noise reduction techniques using Python with libraries like OpenCV
+
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+# Load the image
+image = cv2.imread('Test3.jpg')
+
+# Convert the image to grayscale
+gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Smoothing Filters
+blur = cv2.GaussianBlur(gray_image, (5, 5), 0)  # Gaussian Blur
+
+median = cv2.medianBlur(gray_image, 5)  # Median Filter
+
+# Sharpening Filter (Laplacian)
+laplacian = cv2.Laplacian(gray_image, cv2.CV_64F)
+laplacian = np.uint8(np.absolute(laplacian))
+
+# Histogram Equalization
+equalized_image = cv2.equalizeHist(gray_image)
+
+# Edge Detection (Canny)
+edges = cv2.Canny(gray_image, 100, 200)
+
+# Displaying the images using Matplotlib
+plt.figure(figsize=(12, 12))
+
+plt.subplot(2, 3, 1), plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB)), plt.title('Original Image')
+plt.subplot(2, 3, 2), plt.imshow(gray_image, cmap='gray'), plt.title('Grayscale Image')
+plt.subplot(2, 3, 3), plt.imshow(blur, cmap='gray'), plt.title('Gaussian Blur')
+plt.subplot(2, 3, 4), plt.imshow(median, cmap='gray'), plt.title('Median Filter')
+plt.subplot(2, 3, 5), plt.imshow(laplacian, cmap='gray'), plt.title('Laplacian Filter')
+plt.subplot(2, 3, 6), plt.imshow(equalized_image, cmap='gray'), plt.title('Histogram Equalization')
+plt.show()
+
+plt.figure(figsize=(6, 6))
+plt.imshow(edges, cmap='gray'), plt.title('Edge Detection (Canny)')
+plt.show()
+
+
+3.To create a vision program to find histogram value and display histograph of a grayscale and color image.
+
+import cv2
+import matplotlib.pyplot as plt
+
+# Read the color image
+image_color = cv2.imread('Test2.jpg')
+
+if image_color is not None:
+    # Calculate the histogram for each channel (BGR)
+    color = ('b', 'g', 'r')
+    for i, col in enumerate(color):
+        hist = cv2.calcHist([image_color], [i], None, [256], [0, 256])
+        plt.plot(hist, color=col)
+
+    # Display the histogram
+    plt.title('Color Image Histogram')
+    plt.xlabel('Pixel Value')
+    plt.ylabel('Frequency')
+    plt.legend(['Blue', 'Green', 'Red'])
+    plt.show()
+else:
+    print("Error: Unable to read the color image. Please check the file path.")
+
+#import cv2
+#import matplotlib.pyplot as plt
+
+# Read the grayscale image
+image_gray = cv2.imread('Test3.jpg', cv2.IMREAD_GRAYSCALE)
+
+if image_gray is not None:
+    # Calculate the histogram
+    hist_gray = cv2.calcHist([image_gray], [0], None, [256], [0, 256])
+
+    # Display the histogram
+    plt.figure(figsize=(8, 5))
+    plt.plot(hist_gray, color='black')
+    plt.title('Grayscale Image Histogram')
+    plt.xlabel('Pixel Value')
+    plt.ylabel('Frequency')
+    plt.show()
+else:
+    print("Error: Unable to read the grayscale image. Please check the file path.")
+
+
+
+
+4.Image Sampling And Quantization
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the image
+image = cv2.imread('Test3.jpg')
+
+# Display the original image
+plt.figure(figsize=(6, 6))
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.title('Original Image')
+plt.axis('off')
+plt.show()
+
+# Image Sampling
+def image_sampling(img, factor):
+    sampled_img = img[::factor, ::factor]
+    return sampled_img
+
+# Image Quantization
+def image_quantization(img, levels):
+    quantized_img = np.floor_divide(img, 256 // levels) * (256 // levels)
+    return quantized_img
+
+# Sampling the image by a factor of 2
+sampled_image = image_sampling(image, 2)
+
+# Quantizing the image to 4 levels
+quantized_image = image_quantization(image, 4)
+
+# Display the sampled image
+plt.figure(figsize=(6, 6))
+plt.imshow(cv2.cvtColor(sampled_image, cv2.COLOR_BGR2RGB))
+plt.title('Sampled Image (Factor: 2)')
+plt.axis('off')
+plt.show()
+
+# Display the quantized image
+plt.figure(figsize=(6, 6))
+plt.imshow(cv2.cvtColor(quantized_image, cv2.COLOR_BGR2RGB))
+plt.title('Quantized Image (Levels: 4)')
+plt.axis('off')
+plt.show()
+
+from google.colab import files
+from IPython.display import Image
+
+
+# Upload file
+noisy_image =files.upload()
+
+5.To create a program to display grayscale image using read and write operation (need to edit)
+
+import cv2
+
+# Read the grayscale image
+image = cv2.imread('Test2.jpg', cv2.IMREAD_GRAYSCALE)
+
+if image is not None:
+    # Display the grayscale image
+    #cv2_imshow('Grayscale Image', image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    # Save the grayscale image
+    cv2.imwrite('Test2GS.jpg', image)
+    print("Grayscale image saved successfully.")
+else:
+    print("Error: Unable to read the image. Please check the file path.")
+
+6.To create a program to discretize an image using Fourier transformation.
+
+
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Read the image
+image = cv2.imread('Test3.jpg', 0)  # Read image as grayscale
+
+if image is not None:
+    # Apply Fourier Transform
+    f_transform = np.fft.fft2(image)
+    f_shift = np.fft.fftshift(f_transform)
+
+    # Define the percentage of high frequencies to discard (discretization)
+    percentage = 0.1  # Modify this value to change the amount of information retained
+
+    # Determine the shape of the image
+    rows, cols = image.shape
+    center_row, center_col = rows // 2, cols // 2
+
+    # Discretize the Fourier Transform
+    f_shift[int(center_row - percentage * rows):int(center_row + percentage * rows),
+            int(center_col - percentage * cols):int(center_col + percentage * cols)] = 0
+
+    # Inverse Fourier Transform
+    f_ishift = np.fft.ifftshift(f_shift)
+    image_back = np.fft.ifft2(f_ishift)
+    image_back = np.abs(image_back)
+
+    # Display the original and discretized images
+    plt.figure(figsize=(12, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(image, cmap='gray')
+    plt.title('Original Image')
+    plt.axis('off')
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(image_back, cmap='gray')
+    plt.title('Discretized Image')
+    plt.axis('off')
+
+    plt.show()
+else:
+    print("Error: Unable to read the image. Please check the file path.")
+
+
+7.Canny edge detection
+
+
+import cv2
+import matplotlib.pyplot as plt
+
+# Read the image
+image = cv2.imread('Test3.jpg', 0)  # Read image as grayscale
+
+if image is not None:
+    # Apply Canny edge detection
+    edges = cv2.Canny(image, 100, 200)  # You can adjust the thresholds for edge detection
+
+    # Display the original image and the detected edges
+    plt.figure(figsize=(10, 5))
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(image, cmap='gray')
+    plt.title('Original Image')
+    plt.axis('off')
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(edges, cmap='gray')
+    plt.title('Canny Edge Detection')
+    plt.axis('off')
+
+    plt.show()
+else:
+    print("Error: Unable to read the image. Please check the file path.")
+
